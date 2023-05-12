@@ -1,0 +1,41 @@
+clc;
+clear all;
+close all;
+Ac=1;
+Am=1;
+fm = 15;
+B = 5;
+fs = 10000;
+t = 0:1/fs:0.5;
+m=Am*cos(2*pi*fm*t);
+subplot(4,1,1);
+plot(t,m);
+xlabel('Time');
+ylabel('Amplitude');
+title('Message Signal');
+grid on;
+
+fc = 150;
+c = Ac*sin(2*pi*fc*t);
+subplot(4,1,2);
+plot(t,c);
+xlabel('Time');
+ylabel('Amplitude');
+title('Carrier Signal');
+grid on;
+
+y = Ac*sin(2*pi*fc*t+(B*sin(2*pi*fm*t)));
+subplot(4,1,3);
+plot(t,y);
+xlabel('Time');
+ylabel('Amplitude');
+title('FM Signal');
+grid on;
+
+x = demod(y,fc,fs,'fm');
+subplot(4,1,4);
+plot(t,x);
+xlabel('Time');
+ylabel('Amplitude');
+title('Demodulated Signal');
+grid on;
