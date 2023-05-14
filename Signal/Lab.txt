@@ -1,0 +1,394 @@
+% 1Num DFt and IDFT
+clc;
+clear all;
+
+close all;
+
+x=input('Enter the sequence x[n]=');
+N=input('Enter n');
+disp(N);
+subplot(3,1,1);
+stem(x);
+%ylim([-1,2]);
+xlabel('n');
+ylabel('x(n)');
+title('Input Signal');
+grid on;
+
+if N>length(x)
+    for i =1:N-length(x)
+        x=[x 0];
+    end
+end
+
+y=zeros(1,N);
+for k =0:N-1
+    for n=0:N-1
+        y(k+1)=y(k+1)+x(n+1)*exp((-1i*2*pi*k*n)/N);
+    end
+end
+
+disp(y);
+subplot(3,1,2);
+stem(y);
+%axis([-7 7 -5 5]);
+xlabel('k');
+ylabel('X(k)');
+title('DFT Values ');
+grid on;
+
+M=length(y);
+m=zeros(1,M);
+for k =0:M-1
+    for n=0:M-1
+        m(k+1)=m(k+1)+((1/M)*y(n+1)*exp((1i*2*pi*k*n)/M));
+    end
+end
+
+disp(m);
+subplot(3,1,3);
+stem(m);
+xlabel('n');
+ylabel('y(n)');
+title('IDFT Values ');
+grid on;
+
+% 2Num determine and plot sequences x1(n)=2x(n-5)-3x(n+4)
+clc;
+clear all;
+%figure(1);
+x = [1 2 3 4 5 6 7 6 5 4 3 2 1];
+n = -2:10;
+
+subplot(4,1,1);
+stem(n,x);
+title('x(n)');
+%figure(2);
+n1 = 3:15;
+%a = n+n1;
+subplot(4,1,2);
+stem(n1,x);
+title('x(n-5)');
+%figure(3);
+n2 = -6:6;
+%b = n-n2;
+subplot(4,1,3);
+stem(n2,x);
+title('x(n+4)');
+m = min(min(n1),min(n2)):max(max(n1),max(n2));
+y1 = [];
+temp = 1;
+for i = 1:length(m);
+    if (m(i)<min(n1)||m(i)>max(n1));
+        y1 = [y1 0];
+    else
+        y1 = [y1 x(temp)];
+        temp = temp+1;
+    end
+end
+y2 = [];
+temp = 1;
+for i = 1:length(m);
+    if (m(i)<min(n2)||m(i)>max(n2));
+        y2 = [y2 0];
+    else
+        y2 = [y2 x(temp)];
+        temp = temp+1;
+    end
+end
+y = (2.*y1)-(3.*y2);
+subplot(4,1,4);
+stem(m,y);
+title('x1(n)=2x(n-5)-3x(n+4)');
+
+% 3Num matlab sampling quantization coding
+clc;
+clear all;
+close all;
+
+A =input('Enter amplitude of transmitting signal : ');
+f=50;
+T=1/f;
+t=0:T/100:2*T ;
+n=1:40;
+y=A*sin(2*pi*f*t);
+subplot(4,1,1);
+plot(t,y);
+title("continues time message signal/transmitting signal");
+xlabel("time");
+ylabel("amplitude");
+
+%sampling signal 
+y1=A*sin(2*pi*f*(0.001)*n);
+subplot(4,1,2);
+stem(n,y1);
+title("Discrete time signal after sampling");
+xlabel("n---");
+ylabel("amplitude");
+
+%DC + Ac lavel 
+y2=A+y1 ;
+subplot(4,1,3);
+stem(n,y2);
+title("DC lavel + Discrete Time signal");
+xlabel("n----");
+ylabel("amplitude");
+
+%quantinization 
+y3=round(y2);
+subplot(4,1,4);
+stem(n,y3);
+title("Quantinization (Quantized Signal) ");
+xlabel("n----");
+ylabel("amplitude");
+
+%coding 
+y4=dec2bin(y3);
+disp("binary information");
+disp(y4);
+
+% 4Num determine and plot seuences x(n)=2&(n+2)-&(n-4)
+clc;
+clear all;
+close all;
+n = -5:5;
+n1 = -2:5;
+n2 = -5:4;
+y1=(n==-2);
+y2=(n==4);
+y3 = 2*y1-y2;
+subplot(2,1,1);
+stem(n,y3);
+title('Unit impulse shifting');
+xlabel('n');
+ylabel('amplitude')
+
+% 5Num addition folding
+clc;
+clear all;
+close all;
+
+n1=-2:1;
+n2=0:3;
+n3=-1:2;
+x=[1,0,3,4];
+y=[1,1,1,1];
+z=[3,-1,0,-4];
+m=min(min(n1),min(n2)):max(max(n1),max(n2));
+y1=[];
+t=1;
+for i=1 :length(m)
+    if(m(i)<min(n1) || m(i)>max(n1))
+        y1=[y1 0];
+    else
+        y1=[y1 x(t)];
+        t=t+1 ;
+    end
+end
+y2=[];
+a=1;
+for i=1:length(m)
+    if(m(i)<min(n2) || m(i)>max(n2))
+        y2=[y2 0];
+    else
+        y2=[y2 y(a)];
+        a=a+1 ;
+    end
+end
+subplot(5,1,1);
+stem(n1,x);
+grid on;
+title('X-Signal');
+xlabel('n');
+ylabel('Amplitude');
+
+subplot(5,1,2);
+stem(n2,y);
+grid on;
+title('Y-Signal');
+xlabel('n');
+ylabel('Amplitude');
+
+y3=y1+y2 ;
+subplot(5,1,3);
+stem(m,y3);
+title("addition of signal");
+xlabel("n---");
+ylabel("amplitude");
+
+%folding operation
+subplot(5,1,4);
+stem(n3,z);
+grid on;
+title('Z-Signal');
+xlabel('n');
+ylabel('Amplitude');
+
+y4=(-1).*n3 ;
+subplot(5,1,5);
+stem(y4,z);
+title("folding the signal");
+xlabel("n---");
+ylabel("amplitude");
+grid on;
+
+% 6Num Multiplication shifting
+clc;
+clear all;
+close all;
+
+n1=-2:1;
+n2=0:3;
+n3=-2:2;
+x=[1,2,3,4];
+y=[1,1,1,1];
+z=[-2,3,0,1,5];
+range=min(min(n1),min(n2)):max(max(n1),max(n2));
+y1=[];
+t1=1;
+for i=1:length(range)
+    if(range(i)<min(n1) || range(i)>max(n1))
+        y1=[y1 0];
+    else
+        y1=[y1 x(t1)];
+        t1=t1+1;
+    end
+end
+y2=[];
+t2=1;
+for i=1:length(range)
+    if(range(i)<min(n2) || range(i)>max(n2))
+        y2=[y2 0];
+%shifting signal
+    else
+        y2=[y2 y(t2)];
+        t2=t2+1;
+    end
+end
+subplot(5,1,1);
+stem(n1,x);
+grid on;
+title('X-Signal');
+xlabel('n');
+ylabel('Amplitude');
+
+subplot(5,1,2);
+stem(n2,y);
+grid on;
+title('Y-Signal');
+xlabel('n');
+ylabel('Amplitude');
+
+y3=y1.*y2 ;
+subplot(5,1,3);
+stem(range,y3);
+grid on;
+title("multiplication of two signal");
+xlabel("n---");
+ylabel("amplitude");
+
+subplot(5,1,4);
+stem(n3,z);
+grid on;
+title('Z-Signal');
+xlabel('n');
+ylabel('Amplitude');
+
+
+n=n3+2;
+subplot(5,1,5);
+stem(n,z);
+grid on;
+title("shifting signal y(n)= z(n-2)");
+xlabel("n---");
+ylabel("amplitude");
+
+% 7Num fourier transform of a time function the periodic pulse 
+clc;
+clear all;
+close all;
+f = -2:0.01:2;
+x = 4*sinc(4*pi*f);
+figure(1);
+subplot(3,1,1)
+plot(f,real(x));
+xlabel('f------------->');
+title('Real Part');
+grid on;
+
+xlabel('f----------->');
+subplot(3,1,2);
+plot(f,abs(x));
+title('Magnitude Part');
+xlabel('f------->');
+grid on;
+
+subplot(3,1,3);
+plot(f,angle(x));
+title("Phase Part");
+xlabel('F----->');
+grid on;
+
+% 8Num amplitude spectrum of the two frequency signal
+
+clc;
+clear all;
+close all;
+N=250;
+ts=.0002;
+t=[0:N-1]*ts;
+x=cos(2*pi*100*t)+cos(2*pi*500*t);
+subplot(2,1,1)
+plot(t,x)
+
+
+k=0;
+for f=0:1:800
+    k=k+1;
+    X(k)=trapz(t,x.*exp(-j*2*pi*f*t)); %Trapezoidal numerical integration
+%Q = trapz(X,Y) integrates Y with respect to the coordinates or scalar spacing specified by X.
+end
+f=0:800;
+subplot(2,1,2);
+plot(f, abs(X));
+
+% 9Num generate sinusoidal wave with different frequency
+clc;
+clear all;
+close all;
+A = 5;
+f =100;
+T = 1/f;
+t = 0:T/100:T;
+y = A*sin(2*pi*f*t);
+plot(t,y);
+xlabel('t');
+ylabel('amplitude');
+title('Sinusoidal wave');
+
+% 10Num unit sample unit step unit ramp
+clc;
+clear all;
+close all;
+
+n0 = -10:10;
+x = [(n0>=0)==1];
+subplot(3,1,1);
+stem(n0,x);
+title('Unit Step Signal');
+xlabel('Discrete Time');
+ylabel('Amplitude');
+
+y = [(n0 == 0) ==1];
+subplot(3,1,2);
+stem(n0,y);
+title('Unit Impulse Signal');
+xlabel('Discrete Time');
+ylabel('Amplitude');
+
+k = [(((n0>=1)==1).*n0)];
+subplot(3,1,3);
+stem(n0,k);
+title('Unit Ramp Signal');
+xlabel('Discrete Time');
+ylabel('Amplitude');
